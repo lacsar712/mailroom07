@@ -93,8 +93,15 @@ func DumpTrayList(path, body string) error {
 	return nil
 }
 
+// GrowRouting appends extra to dst and returns an independent slice.
+// It never reuses dst's backing array, so when dst still has spare
+// capacity the returned slice does not alias it: writes to the result
+// cannot pollute the caller's routing buffer.
 func GrowRouting(dst []byte, extra byte) []byte {
-	return append(dst, extra)
+	out := make([]byte, len(dst)+1)
+	copy(out, dst)
+	out[len(dst)] = extra
+	return out
 }
 
 type Piece struct {
